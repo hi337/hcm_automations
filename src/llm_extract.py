@@ -5,7 +5,7 @@ import os
 from openai import AzureOpenAI, OpenAI
 
 from schemas.cardiac_mri_schema import ReportExtraction
-from src.config import AZURE_OPENAI_DEPLOYMENT, LLM_PROVIDER, OPENAI_MODEL
+from src.config import AZURE_OPENAI_DEPLOYMENT, LLM_PROVIDER, OPENAI_MODEL, OPENAI_REASONING_EFFORT
 
 
 PROMPT_RULES = """
@@ -53,11 +53,8 @@ Report text:
 
 def _openai_extract(report_text: str, accession: str, regex_data: dict) -> dict:
     client = OpenAI()
-    response = client.responses.parse(
-        model=OPENAI_MODEL,
-        input=_prompt(report_text, accession, regex_data),
-        text_format=ReportExtraction,
-    )
+    params = _response_params(report_text, accession, regex_data, OPENAI_MODEL)
+    response = client.responses.parse(**params)
     return response.output_parsed.model_dump()
 
 
@@ -69,12 +66,22 @@ def _azure_openai_extract(report_text: str, accession: str, regex_data: dict) ->
         api_key=os.environ["AZURE_OPENAI_API_KEY"],
         api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2025-03-01-preview"),
     )
-    response = client.responses.parse(
-        model=AZURE_OPENAI_DEPLOYMENT,
-        input=_prompt(report_text, accession, regex_data),
-        text_format=ReportExtraction,
-    )
+    params = _response_params(report_text, accession, regex_data, AZURE_OPENAI_DEPLOYMENT)
+    response = client.responses.parse(**params)
     return response.output_parsed.model_dump()
+
+
+def _response_params(report_text: str, accession: str, regex_data: dict, model: str) -> dict:
+    params = {
+        "model": model,
+        "input": _prompt(report_text, accession, regex_data),
+        "text_format": ReportExtraction,
+    }
+    if OPENAI_REASONING_EFFORT:
+        if OPENAI_REASONING_EFFORT not in {"minimal", "low", "medium", "high"}:
+            raise ValueError("OPENAI_REASONING_EFFORT must be one of: minimal, low, medium, high.")
+        params["reasoning"] = {"effort": OPENAI_REASONING_EFFORT}
+    return params
 
 
 def llm_extract(report_text: str, accession: str, regex_data: dict) -> dict:

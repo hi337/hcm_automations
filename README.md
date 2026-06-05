@@ -51,11 +51,14 @@ Default `.env`:
 
 ```text
 LLM_PROVIDER=openai
-OPENAI_MODEL=gpt-5.4-mini
+OPENAI_MODEL=gpt-5.2
+OPENAI_REASONING_EFFORT=medium
 OPENAI_API_KEY=...
 ```
 
 `azure_openai` and `local_llm` are kept as provider boundaries, but this build defaults to OpenAI and fails loudly if OpenAI credentials are missing.
+
+For more careful extraction, try `OPENAI_REASONING_EFFORT=high`. It will usually be slower and more expensive. For quicker pilot runs, use `medium` or `low`.
 
 ## Optional Docling fallback
 

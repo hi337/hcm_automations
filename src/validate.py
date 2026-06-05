@@ -68,6 +68,8 @@ HCM_POSITIVE_PATTERNS = [
 
 HCM_NEGATIVE_PATTERNS = [
     r"\bno evidence of hypertrophic cardiomyopathy\b",
+    r"\bno\s+(?:MR|MRI|CMR)?\s*features of hypertrophic cardiomyopathy\b",
+    r"\bno\s+(?:MR|MRI|CMR)?\s*features of HCM\b",
     r"\bnot consistent with HCM\b",
     r"\bnot consistent with hypertrophic cardiomyopathy\b",
     r"\bnormal wall thickness\b",

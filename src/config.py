@@ -23,6 +23,7 @@ LOG_DIR = OUTPUT_DIR / "logs"
 
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").strip().lower()
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4-mini")
+OPENAI_REASONING_EFFORT = os.getenv("OPENAI_REASONING_EFFORT", "").strip().lower()
 AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT")
 
 EXCEL_COLUMNS = [

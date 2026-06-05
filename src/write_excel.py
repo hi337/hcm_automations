@@ -192,12 +192,12 @@ def _master_notes(extraction: dict) -> str | None:
         evidence = prior_arrhythmia.get("evidence")
         notes.append(f"prior arrhythmia: {evidence or prior_arrhythmia.get('value')}")
 
-    unsure = extraction.get("fields_blank_due_to_uncertainty") or []
-    if unsure:
-        notes.append(f"review uncertain fields: {', '.join(unsure)}")
-
     classification = extraction.get("hcm_classification")
     if classification == "unsure":
-        notes.append("review HCM classification")
+        evidence = extraction.get("hcm_classification_evidence")
+        if evidence:
+            notes.append(f"CHECK HCM CLASSIFICATION: routed unsure_hcm; evidence: {evidence}")
+        else:
+            notes.append("CHECK HCM CLASSIFICATION: routed unsure_hcm")
 
     return "; ".join(notes) if notes else None
