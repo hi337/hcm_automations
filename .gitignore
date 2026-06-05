@@ -1,0 +1,13 @@
+.env
+.venv/
+vendor/
+__pycache__/
+*.pyc
+output/*.xlsx
+output/**/*.json
+output/**/*.txt
+output/**/*.log
+output/hcm/*.pdf
+output/not_hcm/*.pdf
+output/unsure_hcm/*.pdf
+input_reports/*.pdf
