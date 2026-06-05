@@ -72,7 +72,7 @@ def append_to_excel(row: dict) -> None:
     else:
         df = pd.DataFrame(columns=EXCEL_COLUMNS)
 
-    df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+    df = _upsert_row(df, row, "accession_number")
     df = df.reindex(columns=EXCEL_COLUMNS)
     df.to_excel(EXCEL_PATH, index=False)
 
@@ -116,7 +116,7 @@ def append_to_master_excel(row: dict) -> None:
     else:
         df = pd.DataFrame(columns=MASTER_COLUMNS)
 
-    df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+    df = _upsert_row(df, row, "Accession #")
     df = df.reindex(columns=MASTER_COLUMNS)
     with pd.ExcelWriter(MASTER_ROWS_PATH, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="Sheet1")
@@ -131,6 +131,30 @@ def _field_value(extraction: dict, field_name: str):
     if field.get("confidence") == "high":
         return field.get("value")
     return None
+
+
+def _upsert_row(df: pd.DataFrame, row: dict, key_column: str) -> pd.DataFrame:
+    key = row.get(key_column)
+    if key is None:
+        return pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+
+    if key_column not in df.columns:
+        df[key_column] = None
+
+    matches = df.index[df[key_column].astype(str) == str(key)].tolist()
+    if not matches:
+        return pd.concat([df, pd.DataFrame([row])], ignore_index=True)
+
+    keep_index = matches[0]
+    for column, value in row.items():
+        if column not in df.columns:
+            df[column] = None
+        df.at[keep_index, column] = value
+
+    if len(matches) > 1:
+        df = df.drop(index=matches[1:])
+
+    return df.reset_index(drop=True)
 
 
 def _age_from_extraction(extraction: dict) -> int | None:
