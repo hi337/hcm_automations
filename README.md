@@ -28,6 +28,8 @@ Put PDFs in `input_reports/`, then run:
 python -m src.main
 ```
 
+Name each PDF with the study accession number, for example `AHS8391094.pdf` or `102520586.pdf`. The pipeline treats the filename stem as the authoritative accession number and uses it in Excel even if the report text omits or disagrees with the accession.
+
 Outputs are written to:
 
 - `output/dataset.xlsx`

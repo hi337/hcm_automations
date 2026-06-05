@@ -41,6 +41,8 @@ def _prompt(report_text: str, accession: str, regex_data: dict) -> str:
 
 Accession number: {accession}
 
+The accession number comes from the PDF filename and is authoritative. Do not replace it with a different accession number from the report text.
+
 Regex pre-extraction:
 {regex_data}
 

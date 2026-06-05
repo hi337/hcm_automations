@@ -81,7 +81,7 @@ def extraction_to_master_row(extraction: dict, pdf_path: Path) -> dict:
     row = {col: None for col in MASTER_COLUMNS}
 
     row["SVCC ID"] = writeable_value(extraction.get("SVCC_ID"))
-    row["Accession #"] = extraction.get("accession_number") or pdf_path.stem
+    row["Accession #"] = pdf_path.stem
     row["age"] = _age_from_extraction(extraction)
     row["sex"] = writeable_value(extraction.get("sex"))
     row["height (cm)"] = writeable_value(extraction.get("height_cm"))
